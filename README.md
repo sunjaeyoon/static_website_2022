@@ -1,1 +1,5 @@
-# static_website_2022
+# three-js-experiments_2022
+
+git clone
+npm i
+nmp run dev

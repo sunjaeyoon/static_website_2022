@@ -15,6 +15,10 @@
   <body>
 
     <canvas id="bg"></canvas>   
+    <video id="video" loop muted crossOrigin="anonymous" playsinline style="display:none">
+        <source src="./resource/output3.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+    </video>
+
     <script type="module">
 
 import * as THREE from 'three';
@@ -27,6 +31,7 @@ var pointLight, ambientLight;
 var lightHelper, gridHelper;
 var cube;
 var screen;
+var video;
 
 //Global Variables
 const world = {
@@ -55,10 +60,21 @@ function createCube() {
 }
 
 function createScreen(){
-    const geometry = new THREE.PlaneGeometry(10,10,50,50);
-    const material = new THREE.PointsMaterial({color:0xffffff, size: 0.2});
+    video = document.getElementById( 'video' );
+    video.play();
+    const texture = new THREE.VideoTexture( video );
+
+    const geometry = new THREE.PlaneGeometry(20,20,50,50);
+    //const material = new THREE.PointsMaterial({color:0xffffff, size: 0.2});
     //const material = new THREE.MeshBasicMaterial( { color: 0xffffff } )
-    screen = new THREE.Points(geometry, material)
+    const material = new THREE.MeshBasicMaterial( 
+        { 
+            map: texture,
+            side: THREE.DoubleSide,  
+        } 
+    )
+    //screen = new THREE.Points(geometry, material)
+    screen = new THREE.Mesh(geometry, material);
     scene.add(screen);
 }
   

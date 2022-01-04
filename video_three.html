@@ -27,6 +27,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 //Global Animation Object
+var clock = new THREE.Clock();
 var pointLight, ambientLight;
 var lightHelper, gridHelper;
 var cube;
@@ -62,8 +63,8 @@ function createCube() {
 function createScreen(){
     video = document.getElementById( 'video' );
     video.play();
-    const texture = new THREE.VideoTexture( video );
-
+    //const texture = new THREE.VideoTexture( video );
+    const texture = new THREE.TextureLoader().load( "resource/water.jpg" );
     const geometry = new THREE.PlaneGeometry(20,20,50,50);
     //const material = new THREE.PointsMaterial({color:0xffffff, size: 0.2});
     //const material = new THREE.MeshBasicMaterial( { color: 0xffffff } )
@@ -86,7 +87,16 @@ function createGrid() {
 }
 
 //-----------Object Animations
-
+function moveScreen() {
+  const { array } = screen.geometry.attributes.position;
+  var delta = clock.getDelta();
+  console.log(array.length)
+  for (let i = 0; i < 150; i+=3) { 
+    array[i] = 5*Math.sin(i*delta);
+  }
+  screen.geometry.attributes.position.needsUpdate = true;
+  console.log(screen)
+}
 //------------DAT gui
 function datGUI() {
   /* EXAMPLE  
@@ -108,6 +118,7 @@ function init() {
   //createCube();
   createGrid();
   createScreen();
+  moveScreen();
   window.addEventListener('resize', onWindowResize, false);
 }
 
@@ -115,6 +126,7 @@ function init() {
 function animate() {
   requestAnimationFrame( animate );
   renderer.render( scene, camera );
+  //moveScreen();
 };
 
 // MAIN CODE

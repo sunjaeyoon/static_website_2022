@@ -5,50 +5,12 @@ https://www.youtube.com/watch?v=vM8M4QloVL0
 
 import './style.css';
 import * as THREE from 'three';
-import { GUI } from 'dat.gui'
-import glslify from 'glslify';
+import { GUI } from 'dat.gui';
 import gsap from 'gsap';
-//import vertexShader from './shaders/vertexShader.glsl';
-//console.log(vertexShader)
-
-var vertexShader = glslify(`
-varying vec2 vertexUV;
-varying vec3 vertexNormal;
-void main() {
-    vertexUV = uv;
-    vertexNormal = normalMatrix * normal;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
-}`);
-
-var fragmentShader = glslify(`
-uniform sampler2D globeTexture;
-
-varying vec2 vertexUV;
-varying vec3 vertexNormal;
-void main() {
-    
-    float intensity = 1.05 - dot(vertexNormal, vec3(0.0, 0.0, 1.0));
-    vec3 atmosphere = vec3(0.3, 0.6, 1.0) * pow(intensity, 1.5);
-    gl_FragColor = vec4(atmosphere + texture2D(globeTexture, vertexUV).xyz , 1);
-    //gl_FragColor = vec4(0.4, 0.2, 0.5, 1);
-}
-`)
-
-var atmosphereVertexShader = glslify(`
-varying vec3 vertexNormal;
-void main() {
-    vertexNormal = normalMatrix * normal;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-}
-`);
-
-var atmosphereFragmentShader = glslify(`
-varying vec3 vertexNormal;
-void main() {
-    float intensity = pow(0.8 - dot(vertexNormal, vec3(0, 0, 1.0)), 2.0);
-    gl_FragColor = vec4(0.3, 0.6, 0.9, 1.0) * intensity;
-}
-`);
+import vertexShader from './shaders/vertexShader.glsl';
+import fragmentShader from './shaders/fragmentShader.glsl';
+import atmosphereVertexShader from './shaders/atmosphereVertexShader.glsl';
+import atmosphereFragmentShader from './shaders/atmosphereFragmentShader.glsl';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, innerWidth/innerHeight, 0.1, 500);

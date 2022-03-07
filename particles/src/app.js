@@ -10,7 +10,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import vertex from './shaders/vertex.glsl';
 import fragment from './shaders/fragment.glsl';
 
+import mask from './../img/mask.jpg';
+import t1 from './../img/t1.jpg';
+import t2 from './../img/t2.jpg';
 
+console.log(t1);
+console.log(t2);
 export default class Sketch{
     constructor(){
         // Scene, Camera, Renderer
@@ -22,8 +27,15 @@ export default class Sketch{
         });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.time = 0;
-        
-        //Orbit Controls
+
+        // Textures
+        this.textures = [
+            new THREE.TextureLoader().load(t1),
+            new THREE.TextureLoader().load(t2),
+        ];
+        this.mask = new THREE.TextureLoader().load(mask);
+
+        // Orbit Controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 
         // Add Objects
@@ -73,14 +85,19 @@ export default class Sketch{
 
         this.material = new THREE.ShaderMaterial({
             vertexShader: vertex,
-            fragmentShader: fragment
+            fragmentShader: fragment,
+            uniforms:{
+                progress: {type: "f", value:0},
+                t1: {type: "t", value: this.textures[0]},
+                t2: {type: "t", value: this.textures[1]},
+                mask: {type: "t", value: this.mask}
+            },
+            side: THREE.DoubleSide,
+            transparent: true,
         })
         this.plane = new THREE.Points(this.geometry, this.material);
         this.scene.add(this.plane);
-    }
-
-    
-   
+    }  
 }
 
 var draw = new Sketch();

@@ -14,8 +14,7 @@ import mask from './../img/mask.jpg';
 import t1 from './../img/t1.jpg';
 import t2 from './../img/t2.jpg';
 
-console.log(t1);
-console.log(t2);
+
 export default class Sketch{
     constructor(){
         // Scene, Camera, Renderer
@@ -24,9 +23,13 @@ export default class Sketch{
         this.camera.position.set(0,0,500);
         this.renderer = new THREE.WebGLRenderer({
             canvas: document.querySelector('#bg'),
+            antialias: true,
         });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
+        
+        // Class Variables
         this.time = 0;
+        this.move = 0;
 
         // Textures
         this.textures = [
@@ -41,10 +44,18 @@ export default class Sketch{
         // Add Objects
         this.createMesh();
 
+        // Resize
         window.addEventListener('resize', this.onWindowResize, false);
+        this.mouseEffects();
         this.animate();
     };
 
+    mouseEffects = () => {
+        window.addEventListener('mousewheel', (e)=>{
+            //console.log(e.wheelDeltaY);
+            this.move += e.wheelDeltaY/1000;
+        })
+    }
     onWindowResize = () =>{
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
@@ -53,6 +64,9 @@ export default class Sketch{
 
     render = () =>{
         this.time++;
+
+        this.material.uniforms.time.value = this.time;
+        this.material.uniforms.move.value = this.move;
         this.renderer.render( this.scene, this.camera );
     };
 
@@ -60,7 +74,7 @@ export default class Sketch{
         //this.plane.rotation.x += 0.01;
         //this.plane.rotation.y += 0.01;
         this.render();  
-        requestAnimationFrame( this.animate );
+        window.requestAnimationFrame( this.animate );
     };
 
     createMesh = () =>{
@@ -69,6 +83,12 @@ export default class Sketch{
         this.geometry = new THREE.BufferGeometry();
         this.positions = new THREE.BufferAttribute(new Float32Array(number*number*3),3);
         this.coordinates = new THREE.BufferAttribute(new Float32Array(number*number*3),3);
+        this.speeds = new THREE.BufferAttribute(new Float32Array(number*number*3),1);
+        this.offset = new THREE.BufferAttribute(new Float32Array(number*number*3),1);
+
+        function rand(a,b){
+            return a + (b-a)*Math.random()
+        }
 
         let index = 0;
         for (let i = 0; i < number; i++) {
@@ -76,12 +96,16 @@ export default class Sketch{
             for (let j = 0; j < number; j++) {
                 this.positions.setXYZ(index, posX, j-number/2, 0);
                 this.coordinates.setXYZ(index, i, j, 0);
+                this.offset.setX(index, rand(-1000,1000));
+                this.speeds.setX(index, rand(0.4,1));
                 index++;
             }    
         }
 
         this.geometry.setAttribute('position', this.positions);
         this.geometry.setAttribute('aCoordinates', this.coordinates);
+        this.geometry.setAttribute('aSpeed', this.speeds);
+        this.geometry.setAttribute('aOffset', this.offset);
 
         this.material = new THREE.ShaderMaterial({
             vertexShader: vertex,
@@ -90,11 +114,16 @@ export default class Sketch{
                 progress: {type: "f", value:0},
                 t1: {type: "t", value: this.textures[0]},
                 t2: {type: "t", value: this.textures[1]},
-                mask: {type: "t", value: this.mask}
+                mask: {type: "t", value: this.mask},
+                time: {type: "f", value:0},
+                move: {type: "f", value:0},
             },
             side: THREE.DoubleSide,
             transparent: true,
-        })
+            depthTest: false,
+            depthWrite: false
+
+        });
         this.plane = new THREE.Points(this.geometry, this.material);
         this.scene.add(this.plane);
     }  

@@ -5,6 +5,7 @@ Followed this guy's instructions: https://www.youtube.com/watch?v=8K5wJeVgjrM
 // LIBRARIES
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import gsap from 'gsap';
 
 // SHADERS
 import vertex from './shaders/vertex.glsl';
@@ -13,7 +14,6 @@ import fragment from './shaders/fragment.glsl';
 import mask from './../img/mask.jpg';
 import t1 from './../img/t1.jpg';
 import t2 from './../img/t2.jpg';
-
 
 export default class Sketch{
     constructor(){
@@ -30,6 +30,8 @@ export default class Sketch{
         // Class Variables
         this.time = 0;
         this.move = 0;
+        this.mouse = {x: 0, y: 0};
+        //this.mouse = new THREE.Vector2();
 
         // Textures
         this.textures = [
@@ -39,7 +41,7 @@ export default class Sketch{
         this.mask = new THREE.TextureLoader().load(mask);
 
         // Orbit Controls
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+        //this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 
         // Add Objects
         this.createMesh();
@@ -55,6 +57,12 @@ export default class Sketch{
             //console.log(e.wheelDeltaY);
             this.move += e.wheelDeltaY/1000;
         })
+        window.addEventListener('mousemove', (e)=>{
+            this.mouse.x = (e.clientX/innerWidth) - 0.5;
+            this.mouse.y = (e.clientY/innerHeight) - 0.5;
+            //console.log(this.mouse.x, this.mouse.y)
+        })
+
     }
     onWindowResize = () =>{
         this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -62,20 +70,7 @@ export default class Sketch{
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
-    render = () =>{
-        this.time++;
-
-        this.material.uniforms.time.value = this.time;
-        this.material.uniforms.move.value = this.move;
-        this.renderer.render( this.scene, this.camera );
-    };
-
-    animate = () =>{
-        //this.plane.rotation.x += 0.01;
-        //this.plane.rotation.y += 0.01;
-        this.render();  
-        window.requestAnimationFrame( this.animate );
-    };
+    
 
     createMesh = () =>{
         //Mesh
@@ -127,6 +122,26 @@ export default class Sketch{
         this.plane = new THREE.Points(this.geometry, this.material);
         this.scene.add(this.plane);
     }  
+    
+    render = () =>{
+        this.time++;
+        this.material.uniforms.time.value = this.time;
+        this.material.uniforms.move.value = this.move;
+
+        gsap.to(this.plane.rotation, {
+            y: this.mouse.x * 0.2,
+            x: this.mouse.y * 0.2
+        });
+
+        this.renderer.render( this.scene, this.camera );
+    };
+
+    animate = () =>{
+        //this.plane.rotation.x += 0.01;
+        //this.plane.rotation.y += 0.001;
+        this.render();  
+        window.requestAnimationFrame( this.animate );
+    };
 }
 
 var draw = new Sketch();

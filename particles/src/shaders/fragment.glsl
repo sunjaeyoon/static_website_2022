@@ -9,6 +9,7 @@ void main(){
     vec4 image = texture2D(t2, myUV);
     
     // Set Fragment Shader
+    //gl_FragColor = vec4(gl_PointCoord, 1., 1.); //Each block has its own uv
     gl_FragColor = image;
     gl_FragColor.a *= maskTexture.r;
 }

@@ -16,12 +16,14 @@ void main(){
     
     // Move
     vec3 pos = position;
-    pos.z = position.z + move * 10. * aSpeed + move * aOffset;
+    pos.x = position.x + 5. * sin(move*aOffset*0.1);
+    pos.y = position.y + 5. * cos(move*aOffset*0.1);
+    pos.z = position.z + move * 1. * aSpeed + move * aOffset;
     
 
     // Set Positions
     vec4 myPosition = modelViewMatrix * vec4(pos, 1.0);
-    gl_PointSize = 450. * (1./ -myPosition.z);
+    gl_PointSize = 500. * (1./ -myPosition.z);
     gl_Position = projectionMatrix * myPosition;
 
     // To Fragment  

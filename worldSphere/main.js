@@ -14,7 +14,7 @@ import atmosphereFragmentShader from './shaders/atmosphereFragmentShader.glsl';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, innerWidth/innerHeight, 0.1, 500);
-camera.position.set(0, 0, 10);
+camera.position.set(0, 0, 50);
 
 const renderer = new THREE.WebGLRenderer({
     antialias: true,

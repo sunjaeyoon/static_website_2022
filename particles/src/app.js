@@ -6,6 +6,7 @@ Followed this guy's instructions: https://www.youtube.com/watch?v=8K5wJeVgjrM
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import gsap from 'gsap';
+import { GUI } from 'dat.gui';
 
 // SHADERS
 import vertex from './shaders/vertex.glsl';
@@ -20,7 +21,7 @@ export default class Sketch{
         // Scene, Camera, Renderer
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x111111);
-        this.camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this.camera.position.set(0,0,700);
         this.renderer = new THREE.WebGLRenderer({
             canvas: document.querySelector('#bg'),
@@ -47,7 +48,6 @@ export default class Sketch{
         this.mask = new THREE.TextureLoader().load(mask);
 
         
-
         // Add Objects
         this.createMesh();
 
@@ -56,6 +56,9 @@ export default class Sketch{
 
         // Animate Loop
         this.animate();
+
+        //Dat
+        this.makeGUI();
     };
 
     eventEffects = () => {
@@ -154,7 +157,8 @@ export default class Sketch{
                 mask: {type: "t", value: this.mask},
                 time: {type: "f", value:0},
                 move: {type: "f", value:0},
-                mousePressed: {type: 'f', value:0},
+                mousePressed: {type: "f", value:0},
+                transition: {type:"f", value:0},
             },
             side: THREE.DoubleSide,
             transparent: true,
@@ -163,7 +167,7 @@ export default class Sketch{
 
         });
         this.plane = new THREE.Points(this.geometry, this.material);
-        //Use group to add an additional animation or move multiple meshes
+        //Use THREE.Group() to add an additional animation or move multiple meshes
         //this.group = new THREE.Group();
         //this.group.add(this.plane);
         //this.scene.add(this.group);
@@ -187,6 +191,11 @@ export default class Sketch{
         this.render();  
         window.requestAnimationFrame( this.animate );
     };
+
+    makeGUI = () => {
+        this.gui = new GUI();
+        this.gui.add(this.material.uniforms.transition, 'value', 0, 1).onChange()
+    }
 }
 
 var draw = new Sketch();

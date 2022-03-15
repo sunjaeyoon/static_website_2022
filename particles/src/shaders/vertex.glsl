@@ -34,7 +34,7 @@ void main(){
     
     vec3 stable = position;
     float dist = distance(stable.xy, mouse);
-    float area = 1. - smoothstep(0.,200.,dist);
+    float area = 1. - smoothstep(0.,100.,dist);
 
     stable.x += 50. * sin(0.1*time*aPress) * aDirection * area * mousePressed;
     stable.y += 50. * sin(0.1*time*aPress) * aDirection * area * mousePressed;
@@ -44,7 +44,7 @@ void main(){
 
     // Set Positions
     vec4 myPosition = modelViewMatrix * vec4(pos, 1.0);
-    gl_PointSize = 2000. * (1./ - myPosition.z);
+    gl_PointSize = 500. * (1./ - myPosition.z);
     gl_Position = projectionMatrix * myPosition;
 
     // To Fragment  

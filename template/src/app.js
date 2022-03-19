@@ -5,6 +5,8 @@ Followed this guy's instructions: https://www.youtube.com/watch?v=8K5wJeVgjrM
 // LIBRARIES
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import gsap from 'gsap';
+import { GUI } from 'dat.gui';
 
 // SHADERS
 import vertex from './shaders/vertex.glsl';

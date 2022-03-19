@@ -194,7 +194,7 @@ export default class Sketch{
 
     makeGUI = () => {
         this.gui = new GUI();
-        this.gui.add(this.material.uniforms.transition, 'value', 0, 1).onChange()
+        this.gui.add(this.material.uniforms.transition, 'value', 0, 1).name('Transition').onChange()
     }
 }
 

@@ -38,7 +38,7 @@ void main(){
 
     stable.x += 50. * sin(0.1*time*aPress) * aDirection * area * mousePressed;
     stable.y += 50. * sin(0.1*time*aPress) * aDirection * area * mousePressed;
-    stable.z += 100.* sin(0.1*time*aPress) * aDirection * area * mousePressed;
+    stable.z += 200.* sin(0.1*time*aPress) * aDirection * area * mousePressed;
 
     pos = mix(stable, pos, transition);
 
